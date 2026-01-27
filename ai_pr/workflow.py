@@ -28,6 +28,8 @@ def run_workflow(target_branch):
     commits = get_recent_commits(target_branch)
     diff_stat = get_diff_stat(target_branch)
 
+    refinement_notes = ""
+
     while True:
         with ui.show_loading("Generating PR draft..."):
             response = get_ai_review(diff, current_branch, commits, target_branch, diff_stat)
@@ -53,6 +55,10 @@ def run_workflow(target_branch):
             else:
                 ui.show_error("Failed to create PR.")
             break
+        elif choice == "refine":
+            refinement_notes = ui.get_refinement_feedback()
+            ui.show_info("Regenerating with your feedback...")
+            continue
         else:
             ui.show_warning("Operation cancelled.")
             break

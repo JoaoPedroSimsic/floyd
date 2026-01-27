@@ -4,6 +4,7 @@ from rich.prompt import Prompt
 from rich.text import Text
 from rich.color import Color
 from contextlib import contextmanager
+import questionary
 
 console = Console()
 
@@ -105,13 +106,22 @@ def display_draft(title, body):
     )
 
 
+def get_refinement_feedback():
+    return Prompt.ask("[bold yellow]What should I change?[/bold yellow]")
+
+
 def get_action_choice():
-    return Prompt.ask(
+    return questionary.select(
         "What would you like to do?",
         choices=["create", "refine", "cancel"],
         default="create",
-    )
-
-
-def get_refinement_feedback():
-    return Prompt.ask("[bold yellow]What should I change?[/bold yellow]")
+        style=questionary.Style(
+            [
+                ("qmark", f"fg:{MAIN_COLOR} bold"),
+                ("question", "bold"),
+                ("pointer", f"fg:{SEC_COLOR} bold"),
+                ("highlighted", f"fg:{SEC_COLOR} bold"),
+                ("selected", "fg:white"),
+            ]
+        ),
+    ).ask()
