@@ -8,15 +8,14 @@ from .git import (
 )
 from .models import get_ai_review, parse_ai_response
 from . import ui
+from .utils import get_config
 
 
 def run_workflow(target_branch):
     current_branch = get_current_branch()
 
     if target_branch == current_branch:
-        ui.show_warning(
-            f"You cannot create a PR from '{current_branch}' to itself."
-        )
+        ui.show_warning(f"You cannot create a PR from '{current_branch}' to itself.")
         return
 
     if pr_exists(current_branch, target_branch):
@@ -34,12 +33,22 @@ def run_workflow(target_branch):
     commits = get_recent_commits(target_branch)
     diff_stat = get_diff_stat(target_branch)
 
+    extra_instructions = get_config("ai")
+
+    if extra_instructions:
+        ui.show_info("AI config loaded successfully.")
+
     refinement_notes = ""
 
     while True:
         with ui.show_loading("Generating PR draft..."):
             response = get_ai_review(
-                diff, current_branch, commits, target_branch, diff_stat
+                diff,
+                current_branch,
+                commits,
+                target_branch,
+                diff_stat,
+                extra_instructions,
             )
 
         if response == "ERROR: CLAUDE_FETCH_FAILED":

@@ -1,5 +1,6 @@
 import subprocess
 import os
+import tomllib
 
 from .ui import show_error
 
@@ -14,20 +15,26 @@ def run_command(command):
         return None
 
 
-def read_file(path):
-    try:
-        with open(path, "r") as f:
-            return f.read().strip()
-    except Exception as e:
-        show_error(f"Could not read config at {path}: {e}")
+def get_config(profile):
+    xdg_config = os.environ.get("XDG_CONFIG_HOME", os.path.expanduser("~/.config"))
+    config_path = os.path.join(xdg_config, "ai-pr.toml")
+
+    if not os.path.exists(config_path):
         return ""
 
-
-def get_custom_instructions():
-    xdg_config = os.environ.get("XDG_CONFIG_HOME", os.path.expanduser("~/.config"))
-    global_config = os.path.join(xdg_config, ".ai-pr")
-
-    if os.path.exists(global_config):
-        return read_file(global_config)
-
-    return ""
+    try:
+        with open(config_path, "rb") as f:
+            data = tomllib.load(f)
+        
+        match profile:
+            case "ai":
+                return data.get("ai", {}).get("instructions", "").strip()
+            
+            case _ if profile in data:
+                return data[profile].get("instructions", "").strip()
+            
+            case _:
+                return ""
+            
+    except Exception:
+        return ""
