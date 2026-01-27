@@ -32,7 +32,9 @@ def run_workflow(target_branch):
 
     while True:
         with ui.show_loading("Generating PR draft..."):
-            response = get_ai_review(diff, current_branch, commits, target_branch, diff_stat)
+            response = get_ai_review(
+                diff, current_branch, commits, target_branch, diff_stat
+            )
 
         if response == "ERROR: CLAUDE_FETCH_FAILED":
             ui.show_error(

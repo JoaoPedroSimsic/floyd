@@ -15,6 +15,7 @@ MAIN_COLOR = "#F59A00"
 SEC_COLOR = "#F5D500"
 
 ICON = """
+                                                  
    █████████   █████    ███████████  ███████████  
   ███░░░░░███ ░░███    ░░███░░░░░███░░███░░░░░███ 
  ░███    ░███  ░███     ░███    ░███ ░███    ░███ 
@@ -111,17 +112,24 @@ def get_refinement_feedback():
 
 
 def get_action_choice():
+    custom_style = questionary.Style(
+        [
+            ("qmark", f"fg:{SEC_COLOR} bold"),
+            ("question", "bold"),
+            ("pointer", f"fg:{MAIN_COLOR} bold"),
+            ("highlighted", f"fg:{MAIN_COLOR} bold"),
+            ("selected", f"fg:{MAIN_COLOR}"),
+            ("answer", f"fg:{SEC_COLOR} bold"),
+        ]
+    )
+
     return questionary.select(
         "What would you like to do?",
-        choices=["create", "refine", "cancel"],
-        default="create",
-        style=questionary.Style(
-            [
-                ("qmark", f"fg:{MAIN_COLOR} bold"),
-                ("question", "bold"),
-                ("pointer", f"fg:{SEC_COLOR} bold"),
-                ("highlighted", f"fg:{SEC_COLOR} bold"),
-                ("selected", "fg:white"),
-            ]
-        ),
+        choices=[
+            questionary.Choice(title="Create Pull Request", value="create"),
+            questionary.Choice(title="Refine Draft", value="refine"),
+            questionary.Choice(title="Cancel", value="cancel"),
+        ],
+        style=custom_style,
+        pointer="❯",
     ).ask()
