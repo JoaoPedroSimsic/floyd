@@ -1,5 +1,6 @@
 from .git import run_command
 from . import ui
+from .utils import get_config
 
 
 def get_ai_review(diff, branch_name, commits, target_branch, diff_stat):

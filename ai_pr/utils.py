@@ -23,7 +23,7 @@ def read_file(path):
         return ""
 
 
-def get_custom_instructions():
+def get_config():
     xdg_config = os.environ.get("XDG_CONFIG_HOME", os.path.expanduser("~/.config"))
     global_config = os.path.join(xdg_config, ".ai-pr")
 
