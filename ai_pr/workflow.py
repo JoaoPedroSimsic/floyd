@@ -11,7 +11,7 @@ from . import ui
 from .utils import get_config
 
 
-def run_workflow(target_branch, profile="ai"):
+def run_workflow(target_branch):
     current_branch = get_current_branch()
 
     if target_branch == current_branch:
@@ -33,7 +33,9 @@ def run_workflow(target_branch, profile="ai"):
     commits = get_recent_commits(target_branch)
     diff_stat = get_diff_stat(target_branch)
 
-    extra_instructions = get_config(profile)
+    extra_instructions = get_config("ai")
+
+    print(f"instructions: {extra_instructions}")
 
     refinement_notes = ""
 

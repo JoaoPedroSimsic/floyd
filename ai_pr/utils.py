@@ -15,9 +15,9 @@ def run_command(command):
         return None
 
 
-def get_config(profile="ai"):
+def get_config(profile):
     xdg_config = os.environ.get("XDG_CONFIG_HOME", os.path.expanduser("~/.config"))
-    config_path = os.path.join(xdg_config, "ai-pr")
+    config_path = os.path.join(xdg_config, "ai-pr.toml")
 
     if not os.path.exists(config_path):
         return ""
@@ -26,10 +26,15 @@ def get_config(profile="ai"):
         with open(config_path, "rb") as f:
             data = tomllib.load(f)
         
-        if not profile or profile not in data:
-            return ""
+        match profile:
+            case "ai":
+                return data.get("ai", {}).get("instructions", "").strip()
             
-        return data[profile].get("instructions", "").strip()
+            case _ if profile in data:
+                return data[profile].get("instructions", "").strip()
+            
+            case _:
+                return ""
             
     except Exception:
         return ""
