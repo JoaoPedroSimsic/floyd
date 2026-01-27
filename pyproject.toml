@@ -8,6 +8,7 @@ dependencies = [
     "setuptools>=80.10.2",
     "rich>=13.0.0",
     "questionary>=2.1.1",
+    "pathlib>=1.0.1",
 ]
 
 [project.scripts]

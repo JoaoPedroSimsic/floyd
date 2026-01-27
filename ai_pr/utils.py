@@ -3,6 +3,7 @@ import os
 import tomllib
 
 from .ui import show_error
+from pathlib import Path
 
 
 def run_command(command):
@@ -16,8 +17,7 @@ def run_command(command):
 
 
 def get_config(profile):
-    xdg_config = os.environ.get("XDG_CONFIG_HOME", os.path.expanduser("~/.config"))
-    config_path = os.path.join(xdg_config, "ai-pr.toml")
+    config_path = Path.home() / ".config" / "ai-pr.toml"
 
     if not os.path.exists(config_path):
         return {}
