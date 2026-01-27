@@ -1,6 +1,7 @@
 import subprocess
 
 from . import ui
+from .utils import run_command
 
 
 def branch_exists(branch_name):
@@ -33,16 +34,6 @@ def get_diff_stat(base_branch):
             ":!*-lock.json",
         ]
     )
-
-
-def run_command(command):
-    try:
-        result = subprocess.run(command, capture_output=True, text=True, check=True)
-        return result.stdout.strip()
-    except subprocess.CalledProcessError as e:
-        if e.stderr:
-            ui.show_error(f"\nCLI Error: {e.stderr.strip()}")
-        return None
 
 
 def get_git_diff(base_branch=None):
