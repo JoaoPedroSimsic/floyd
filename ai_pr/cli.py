@@ -13,18 +13,19 @@ def main():
         return
 
     target_branch = sys.argv[1]
-    ui.show_info(f"Fetching git diff against {target_branch}...")
-
-    diff = get_git_diff(target_branch)
+    
+    with ui.show_loading(f"Fetching git diff against {target_branch}..."):
+        diff = get_git_diff(target_branch)
 
     if not diff:
         return
 
     ui.show_info("Generating initial PR draft...")
 
-    response = get_ai_review(diff)
-
     while True:
+        with ui.show_loading("Generating PR draft..."):
+            response = get_ai_review(diff)
+
         if not response:
             ui.show_error("Claude didn't return a response.")
             return
