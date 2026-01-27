@@ -13,6 +13,28 @@ def branch_exists(branch_name):
     return result.returncode == 0
 
 
+def get_current_branch():
+    return run_command(["git", "branch", "--show-current"])
+
+
+def get_recent_commits(base_branch):
+    return run_command(["git", "log", f"{base_branch}..HEAD", "--oneline"])
+
+
+def get_diff_stat(base_branch):
+    return run_command(
+        [
+            "git",
+            "diff",
+            "--stat",
+            "--merge-base",
+            base_branch,
+            ":!*.lock",
+            ":!*-lock.json",
+        ]
+    )
+
+
 def run_command(command):
     try:
         result = subprocess.run(command, capture_output=True, text=True, check=True)
