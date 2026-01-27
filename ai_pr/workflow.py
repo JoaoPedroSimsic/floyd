@@ -1,4 +1,11 @@
-from .git import get_recent_commits, pr_exists, create_pull_request, get_git_diff, get_current_branch
+from .git import (
+    get_diff_stat,
+    get_recent_commits,
+    pr_exists,
+    create_pull_request,
+    get_git_diff,
+    get_current_branch,
+)
 from .models import get_ai_review, parse_ai_response
 from . import ui
 
@@ -19,10 +26,11 @@ def run_workflow(target_branch):
         return
 
     commits = get_recent_commits(target_branch)
+    diff_stat = get_diff_stat(target_branch)
 
     while True:
         with ui.show_loading("Generating PR draft..."):
-            response = get_ai_review(diff, current_branch, commits, target_branch)
+            response = get_ai_review(diff, current_branch, commits, target_branch, diff_stat)
 
         if response == "ERROR: CLAUDE_FETCH_FAILED":
             ui.show_error(
