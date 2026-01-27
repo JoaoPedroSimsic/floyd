@@ -1,10 +1,45 @@
 from .git import run_command
 from . import ui
+from .utils import get_config
 
 
-def get_ai_review(
-    diff, branch_name, commits, target_branch, diff_stat, custom_instructions=""
-):
+def load_config():
+    config = get_config("ai")
+
+    settings = {"diff_limit": "", "instructions": ""}
+
+    if not config:
+        return settings
+
+    if isinstance(config, dict):
+        settings.update(config)
+
+        for key, value in settings.items():
+            if value:
+                display_value = (
+                    f"{str(value)[:30]}..." if len(str(value)) > 30 else value
+                )
+                ui.show_info(f"'{key}' loaded with value: {display_value}")
+
+    return settings
+
+
+def get_ai_review(diff, branch_name, commits, target_branch, diff_stat):
+    config = load_config()
+
+    custom_instructions = config.get("instructions", "")
+    diff_limit = config.get("diff_limit", "-1")
+
+    try:
+        limit = int(diff_limit) if diff_limit and str(diff_limit).strip('-').isdigit() else -1
+    except ValueError:
+        limit = -1
+
+    if limit != -1 and len(diff) > limit:
+        ui.show_warning(f"Diff exceeds character limit. Truncating to {limit} chars.")
+
+        diff = diff[:limit] + "\n\n[... DIFF TRUNCATED FOR TOKEN LIMITS ...]"
+
     extra_prompt = ""
 
     if custom_instructions:

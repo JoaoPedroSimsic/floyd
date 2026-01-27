@@ -20,21 +20,22 @@ def get_config(profile):
     config_path = os.path.join(xdg_config, "ai-pr.toml")
 
     if not os.path.exists(config_path):
-        return ""
+        return {}
 
     try:
         with open(config_path, "rb") as f:
             data = tomllib.load(f)
-        
+
         match profile:
             case "ai":
-                return data.get("ai", {}).get("instructions", "").strip()
-            
-            case _ if profile in data:
-                return data[profile].get("instructions", "").strip()
-            
+                ai_section = data.get("ai", {})
+
+                diff_limit = str(ai_section.get("diff_limit") or "").strip()
+                instructions = str(ai_section.get("instructions") or "").strip()
+
+                return {"diff_limit": diff_limit, "instructions": instructions}
             case _:
-                return ""
-            
+                return {}
+
     except Exception:
-        return ""
+        return {}
