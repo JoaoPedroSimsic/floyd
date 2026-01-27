@@ -31,7 +31,11 @@ def get_ai_review(diff, branch_name, commits, target_branch, diff_stat):
     diff_limit = config.get("diff_limit", "-1")
 
     try:
-        limit = int(diff_limit) if diff_limit and str(diff_limit).strip('-').isdigit() else -1
+        limit = (
+            int(diff_limit)
+            if diff_limit and str(diff_limit).strip("-").isdigit()
+            else -1
+        )
     except ValueError:
         limit = -1
 
@@ -52,6 +56,7 @@ def get_ai_review(diff, branch_name, commits, target_branch, diff_stat):
         f"- Recent commits:\n{commits}\n\n"
         f"- File Change Summary:\n{diff_stat}\n\n"
         f"Task: Review the git diff below and write a PR title and description. "
+        f"TITLE CONVENTION: Use conventional commits for the title (e.g., feat: [title], fix: [title], docs: [title]).\n\n"
         f"Use the commit history to understand the intent behind the changes.\n\n"
         f"{extra_prompt}"
         f"IMPORTANT: Do not include any signatures, footers, or mentions of "
