@@ -12,6 +12,8 @@ def get_ai_review(diff, branch_name, commits, target_branch, diff_stat):
         f"- File Change Summary:\n{diff_stat}\n\n"
         f"Task: Review the git diff below and write a PR title and description. "
         f"Use the commit history to understand the intent behind the changes.\n\n"
+        f"IMPORTANT: Do not include any signatures, footers, or mentions of "
+        f"being 'Generated with Claude Code' or any other tool.\n\n"
         f"Format your response exactly like this:\n"
         f"TITLE: [Your Title]\n"
         f"BODY: [Your Description]\n\n"
