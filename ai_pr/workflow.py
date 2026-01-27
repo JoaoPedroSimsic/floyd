@@ -8,7 +8,6 @@ from .git import (
 )
 from .models import get_ai_review, parse_ai_response
 from . import ui
-from .utils import get_config
 
 
 def run_workflow(target_branch):
@@ -32,7 +31,6 @@ def run_workflow(target_branch):
 
     commits = get_recent_commits(target_branch)
     diff_stat = get_diff_stat(target_branch)
-
 
     refinement_notes = ""
 

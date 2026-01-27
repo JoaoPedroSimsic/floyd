@@ -6,7 +6,7 @@ from .utils import get_config
 def load_config():
     config = get_config("ai")
 
-    settings = {"max_token": -1, "instructions": ""}
+    settings = {"diff_limit": "-1", "instructions": ""}
 
     if not config:
         return settings
@@ -25,13 +25,20 @@ def load_config():
     return settings
 
 
-def get_ai_review(
-    diff, branch_name, commits, target_branch, diff_stat, custom_instructions=""
-):
+def get_ai_review(diff, branch_name, commits, target_branch, diff_stat):
     config = load_config()
 
-    if extra_instructions:
-        ui.show_info("AI config loaded successfully.")
+    custom_instructions = config.get("instructions", "")
+    diff_limit = config.get("diff_limit", "-1")
+
+    limit = int(diff_limit)
+
+    if limit != -1 and len(diff) > limit:
+        ui.show_warning(f"Diff exceeds character limit. Truncating to {limit} chars.")
+
+        diff = diff[:limit] + "\n\n[... DIFF TRUNCATED FOR TOKEN LIMITS ...]"
+
+    extra_prompt = ""
 
     if custom_instructions:
         extra_prompt = f"\nUSER-SPECIFIC INSTRUCTIONS:\n{custom_instructions}\n"

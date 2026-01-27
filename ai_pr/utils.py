@@ -20,7 +20,7 @@ def get_config(profile):
     config_path = os.path.join(xdg_config, "ai-pr.toml")
 
     if not os.path.exists(config_path):
-        return ""
+        return {}
 
     try:
         with open(config_path, "rb") as f:
@@ -28,15 +28,12 @@ def get_config(profile):
 
         match profile:
             case "ai":
-                max_token = data.get("ai", {}).get("max_token", "").strip()
-                instructions = data.get("ai", {}).get("instructions", "").strip()
+                diff_limit = data.get("ai", {}).get("diff_limit", "").strip()
+                instructions = data.get("ai", {}).get("instructions", "-1").strip()
 
-                return {"max_token": max_token, "instructions": instructions}
-            case _ if profile in data:
-                return data[profile].get("instructions", "").strip()
-
+                return {"diff_limit": diff_limit, "instructions": instructions}
             case _:
-                return ""
+                return {}
 
     except Exception:
-        return ""
+        return {}
