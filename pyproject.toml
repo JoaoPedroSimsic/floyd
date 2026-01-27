@@ -1,0 +1,12 @@
+[project]
+name = "ai-pr"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "anthropic>=0.76.0",
+]
+
+[project.scripts]
+ai-pr="ai_pr.main:main"
