@@ -71,13 +71,13 @@ def show_error(message):
 
 
 def show_info(message):
-    console.print(f"[{MAIN_COLOR}]{message}[/{MAIN_COLOR}]")
+    console.print(f"[gray]{message}[/gray]")
 
 
 @contextmanager
 def show_loading(message="Working..."):
     with console.status(
-        f"[{MAIN_COLOR}]{message}[/{MAIN_COLOR}]",
+        f"[gray]{message}[/gray]",
         spinner="dots",
         spinner_style=SEC_COLOR,
     ) as status:

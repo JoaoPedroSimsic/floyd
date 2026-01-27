@@ -1,6 +1,6 @@
 import sys
 
-from .git import get_git_diff, create_pull_request
+from .git import get_git_diff, create_pull_request, pr_exists, run_command
 from .models import get_ai_review, parse_ai_response
 from . import ui
 
@@ -14,13 +14,17 @@ def main():
 
     target_branch = sys.argv[1]
     
+    current_branch = run_command(["git", "branch", "--show-current"])
+
+    if pr_exists(current_branch, target_branch):
+        ui.show_warning(f"An open PR already exists for {current_branch} -> {target_branch}")
+        return
+
     with ui.show_loading(f"Fetching git diff against {target_branch}..."):
         diff = get_git_diff(target_branch)
 
     if not diff:
         return
-
-    ui.show_info("Generating initial PR draft...")
 
     while True:
         with ui.show_loading("Generating PR draft..."):
