@@ -3,9 +3,14 @@ from .git import run_command
 from . import ui
 
 
-def get_ai_review(diff):
+def get_ai_review(diff, branch_name, commits, target_branch):
     prompt = (
-        f"Review this git diff and write a PR title and description. "
+        f"Context:\n"
+        f"- Working on branch: {branch_name}\n"
+        f"- Target branch: {target_branch}\n"
+        f"- Recent commits:\n{commits}\n\n"
+        f"Task: Review the git diff below and write a PR title and description. "
+        f"Use the commit history to understand the intent behind the changes.\n\n"
         f"Format your response exactly like this:\n"
         f"TITLE: [Your Title]\n"
         f"BODY: [Your Description]\n\n"
