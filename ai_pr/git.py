@@ -57,3 +57,4 @@ def create_pull_request(title, body, base):
         run_command(
             ["gh", "pr", "create", "--title", title, "--body", body, "--base", base]
         )
+        return result is not None
