@@ -40,21 +40,30 @@ def get_git_diff(base_branch=None):
 
 
 def pr_exists(head_branch, base_branch):
-    result = run_command([
-        "gh", "pr", "list", 
-        "--head", head_branch, 
-        "--base", base_branch, 
-        "--state", "open", 
-        "--json", "number", 
-        "--jq", ".[0].number"
-    ])
+    result = run_command(
+        [
+            "gh",
+            "pr",
+            "list",
+            "--head",
+            head_branch,
+            "--base",
+            base_branch,
+            "--state",
+            "open",
+            "--json",
+            "number",
+            "--jq",
+            ".[0].number",
+        ]
+    )
 
     return bool(result)
 
 
 def create_pull_request(title, body, base):
     with ui.show_loading(f"Creating pull request..."):
-        run_command(
+        result = run_command(
             ["gh", "pr", "create", "--title", title, "--body", body, "--base", base]
         )
         return result is not None
