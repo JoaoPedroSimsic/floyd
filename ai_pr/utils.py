@@ -25,16 +25,18 @@ def get_config(profile):
     try:
         with open(config_path, "rb") as f:
             data = tomllib.load(f)
-        
+
         match profile:
             case "ai":
-                return data.get("ai", {}).get("instructions", "").strip()
-            
+                max_token = data.get("ai", {}).get("max_token", "").strip()
+                instructions = data.get("ai", {}).get("instructions", "").strip()
+
+                return {"max_token": max_token, "instructions": instructions}
             case _ if profile in data:
                 return data[profile].get("instructions", "").strip()
-            
+
             case _:
                 return ""
-            
+
     except Exception:
         return ""

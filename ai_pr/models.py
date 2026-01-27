@@ -1,11 +1,37 @@
 from .git import run_command
 from . import ui
+from .utils import get_config
+
+
+def load_config():
+    config = get_config("ai")
+
+    settings = {"max_token": -1, "instructions": ""}
+
+    if not config:
+        return settings
+
+    if isinstance(config, dict):
+        settings.update(config)
+
+        ui.show_info("AI configuration active:")
+        for key, value in settings.items():
+            if value:
+                display_value = (
+                    f"{str(value)[:30]}..." if len(str(value)) > 30 else value
+                )
+                ui.show_info(f" - {key}: {display_value}")
+
+    return settings
 
 
 def get_ai_review(
     diff, branch_name, commits, target_branch, diff_stat, custom_instructions=""
 ):
-    extra_prompt = ""
+    config = load_config()
+
+    if extra_instructions:
+        ui.show_info("AI config loaded successfully.")
 
     if custom_instructions:
         extra_prompt = f"\nUSER-SPECIFIC INSTRUCTIONS:\n{custom_instructions}\n"

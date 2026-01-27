@@ -33,10 +33,6 @@ def run_workflow(target_branch):
     commits = get_recent_commits(target_branch)
     diff_stat = get_diff_stat(target_branch)
 
-    extra_instructions = get_config("ai")
-
-    if extra_instructions:
-        ui.show_info("AI config loaded successfully.")
 
     refinement_notes = ""
 
@@ -48,7 +44,6 @@ def run_workflow(target_branch):
                 commits,
                 target_branch,
                 diff_stat,
-                extra_instructions,
             )
 
         if response == "ERROR: CLAUDE_FETCH_FAILED":
