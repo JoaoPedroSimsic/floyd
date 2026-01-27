@@ -1,9 +1,15 @@
 from .git import run_command
 from . import ui
-from .utils import get_config
 
 
-def get_ai_review(diff, branch_name, commits, target_branch, diff_stat):
+def get_ai_review(
+    diff, branch_name, commits, target_branch, diff_stat, custom_instructions=""
+):
+    extra_prompt = ""
+
+    if custom_instructions:
+        extra_prompt = f"\nUSER-SPECIFIC INSTRUCTIONS:\n{custom_instructions}\n"
+
     prompt = (
         f"Context:\n"
         f"- Working on branch: {branch_name}\n"
@@ -12,6 +18,7 @@ def get_ai_review(diff, branch_name, commits, target_branch, diff_stat):
         f"- File Change Summary:\n{diff_stat}\n\n"
         f"Task: Review the git diff below and write a PR title and description. "
         f"Use the commit history to understand the intent behind the changes.\n\n"
+        f"{extra_prompt}"
         f"IMPORTANT: Do not include any signatures, footers, or mentions of "
         f"being 'Generated with Claude Code' or any other tool.\n\n"
         f"Format your response exactly like this:\n"
@@ -19,6 +26,7 @@ def get_ai_review(diff, branch_name, commits, target_branch, diff_stat):
         f"BODY: [Your Description]\n\n"
         f"Diff:\n{diff}"
     )
+
     response = run_command(["claude", "-p", prompt])
 
     if response is None:
