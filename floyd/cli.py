@@ -2,12 +2,17 @@ import sys
 
 from . import ui
 from .workflow import run_workflow
+from .git import is_git_repo
 
 
 def main():
     if len(sys.argv) < 2:
         ui.show_warning("Usage: ai-pr <target-branch>")
         return
+
+    if not is_git_repo():
+        ui.show_error("Error: This directory is not a git repository.")
+        sys.exit(1)
 
     ui.show_icon()
 

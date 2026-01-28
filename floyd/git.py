@@ -4,6 +4,14 @@ from . import ui
 from .utils import run_command
 
 
+def is_git_repo():
+    result = subprocess.run(
+        ["git", "rev-parse", "--is-inside-work-tree"], capture_output=True, text=True
+    )
+
+    return result.returncode == 0
+
+
 def branch_exists(branch_name):
     result = subprocess.run(
         ["git", "ls-remote", "--exit-code", "--heads", "origin", branch_name],
