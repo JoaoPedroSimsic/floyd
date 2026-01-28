@@ -172,19 +172,19 @@ $ floyd main
 Successfully fetched branch diff
 Successfully generated a PR.
 
-╭─ Draft Pull Request ─╮
-│ Title: feat: add user authentication system                           │
+╭─ Draft Pull Request ───────────────────────────────────────────────────╮
+│ Title: feat: add user authentication system                            │
 │                                                                        │
 │ Body:                                                                  │
-│ This PR introduces a comprehensive user authentication system with:   │
-│ - JWT-based token authentication                                      │
-│ - Password hashing with bcrypt                                        │
-│ - Session management                                                  │
-│ - Login/logout endpoints                                              │
+│ This PR introduces a comprehensive user authentication system with:    │
+│ - JWT-based token authentication                                       │
+│ - Password hashing with bcrypt                                         │
+│ - Session management                                                   │
+│ - Login/logout endpoints                                               │
 │                                                                        │
-│ Breaking Changes:                                                     │
-│ - API endpoints now require authentication headers                   │
-│ - Database schema updated with users table                           │
+│ Breaking Changes:                                                      │
+│ - API endpoints now require authentication headers                     │
+│ - Database schema updated with users table                             │
 ╰────────────────────────────────────────────────────────────────────────╯
 
 ? What would you like to do?
@@ -266,10 +266,6 @@ Check the file has correct TOML syntax.
 ## Contributing
 
 Contributions are welcome! Please feel free to submit issues, fork the repository, and create pull requests.
-
-## License
-
-[Add your license here]
 
 ## Acknowledgments
 
