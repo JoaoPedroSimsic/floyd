@@ -33,10 +33,10 @@ class ClaudeAdapter(AIAdapter):
         command = ["claude"]
 
         if config.model:
-            command.extend(["--model", config.model])
+            command.extend(["-m", config.model])
 
         command.extend(["-p", prompt])
 
-        response = self.terminal.run(command)
+        response = self.terminal.run(command, error_msg="Claude Code error")
 
         return self._parse_response(response)

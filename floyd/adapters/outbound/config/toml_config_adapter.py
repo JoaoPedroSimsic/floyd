@@ -71,7 +71,7 @@ class TomlConfigAdapter(ConfigPort):
             if diff_limit_raw is not None:
                 try:
                     diff_limit = int(diff_limit_raw)
-                except ValueError, TypeError:
+                except (ValueError, TypeError):
                     diff_limit = -1
 
             instructions = str(ai_section.get("instructions") or "").strip()

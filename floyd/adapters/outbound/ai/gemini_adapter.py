@@ -13,10 +13,10 @@ class GeminiAdapter(AIAdapter):
         command = ["gemini"]
 
         if config.model:
-            command.extend(["--model", config.model])
+            command.extend(["-m", config.model])
 
         command.extend(["-p", prompt])
 
-        response = self.terminal.run(command)
+        response = self.terminal.run(command, error_msg="Gemini CLI error")
 
         return self._parse_response(response)
