@@ -140,6 +140,24 @@ def show_success(message: str) -> None:
     console.print(f"[bold green]{message}[/bold green]")
 
 
+def _get_gradient_text(text: str, bold: bool = True) -> Text:
+    """Creates a Rich Text object with a color gradient."""
+    if not text:
+        return Text("")
+
+    rich_text = Text()
+    length = len(text)
+    denom = (length - 1) if length > 1 else 1
+
+    for i, char in enumerate(text):
+        fraction = i / denom
+        color = _get_transition_color(START_COLOR, END_COLOR, fraction)
+        style = f"bold {color}" if bold else color
+        rich_text.append(char, style=style)
+
+    return rich_text
+
+
 def display_draft(pr: PullRequest) -> None:
     """Display a PR draft in a formatted panel.
 
@@ -148,11 +166,13 @@ def display_draft(pr: PullRequest) -> None:
     """
     padding = (1, 3)
 
+    panel_title = _get_gradient_text("Draft Pull Request")
+
     console.print(
         Panel(
             f"[bold {SEC_COLOR}]Title:[/bold {SEC_COLOR}] {pr.title}\n\n"
             f"[bold {SEC_COLOR}]Body:[/bold {SEC_COLOR}]\n{pr.body}",
-            title=f"[{SEC_COLOR}]Draft Pull Request[/{SEC_COLOR}]",
+            title=panel_title,
             border_style=MAIN_COLOR,
             padding=padding,
         )
