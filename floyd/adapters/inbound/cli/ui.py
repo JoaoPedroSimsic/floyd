@@ -166,13 +166,21 @@ def display_draft(pr: PullRequest) -> None:
     """
     padding = (1, 3)
 
-    panel_title = _get_gradient_text("Draft Pull Request")
+    console.print(
+        Panel(
+            Text(pr.title, style="white"),
+            title=_get_gradient_text(" Title "),
+            title_align="left",
+            border_style=MAIN_COLOR,
+            padding=padding,
+        )
+    )
 
     console.print(
         Panel(
-            f"[bold {SEC_COLOR}]Title:[/bold {SEC_COLOR}] {pr.title}\n\n"
-            f"[bold {SEC_COLOR}]Body:[/bold {SEC_COLOR}]\n{pr.body}",
-            title=panel_title,
+            pr.body,
+            title=_get_gradient_text(" Body "),
+            title_align="left",
             border_style=MAIN_COLOR,
             padding=padding,
         )
