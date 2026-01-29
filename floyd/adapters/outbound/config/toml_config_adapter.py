@@ -6,6 +6,11 @@ from pathlib import Path
 
 from floyd.application.dto.ai_config import AIConfig
 from floyd.application.ports.outbound.config_port import ConfigPort
+from floyd.domain.exceptions.ai.invalid_provider_exception import InvalidProviderException
+from floyd.domain.exceptions.config.invalid_config_exception import (
+    InvalidConfigException,
+)
+from floyd.domain.value_objects.ai_provider import AIProvider
 
 
 class TomlConfigAdapter(ConfigPort):
@@ -40,7 +45,10 @@ class TomlConfigAdapter(ConfigPort):
             AIConfig with settings from file or defaults.
         """
         if not self._config_path.exists():
-            return AIConfig()
+            raise InvalidConfigException(
+                f"Configuration file not found at {self._config_path}. "
+                "Please create it or check the path."
+            )
 
         try:
             with open(self._config_path, "rb") as f:
@@ -48,17 +56,29 @@ class TomlConfigAdapter(ConfigPort):
 
             ai_section = data.get("ai", {})
 
+            raw_provider = str(ai_section.get("provider")).lower().strip()
+
+            provider = AIProvider(name=raw_provider)
+
             diff_limit_raw = ai_section.get("diff_limit")
+
             diff_limit = -1
+
             if diff_limit_raw is not None:
                 try:
                     diff_limit = int(diff_limit_raw)
-                except (ValueError, TypeError):
+                except ValueError, TypeError:
                     diff_limit = -1
 
             instructions = str(ai_section.get("instructions") or "").strip()
 
-            return AIConfig(diff_limit=diff_limit, instructions=instructions)
+            return AIConfig(
+                provider=provider.type, diff_limit=diff_limit, instructions=instructions
+            )
 
-        except Exception:
-            return AIConfig()
+        except InvalidProviderException as e:
+            raise e
+        except tomllib.TOMLDecodeError as e:
+            raise InvalidConfigException(f"Failed to parse TOML file: {str(e)}")
+        except Exception as e:
+            raise InvalidConfigException(f"Configuration error: {str(e)}")

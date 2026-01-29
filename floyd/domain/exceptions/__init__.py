@@ -1,5 +1,9 @@
 """Domain exceptions."""
 
+from floyd.domain.exceptions.ai.invalid_provider_exception import InvalidProviderException
+from floyd.domain.exceptions.config.invalid_config_exception import (
+    InvalidConfigException,
+)
 from floyd.domain.exceptions.domain_exception import DomainException
 from floyd.domain.exceptions.git.branch_not_found_exception import (
     BranchNotFoundException,
@@ -16,4 +20,6 @@ __all__ = [
     "InvalidBranchException",
     "PRAlreadyExistsException",
     "PRGenerationException",
+    "InvalidConfigException",
+    "InvalidProviderException",
 ]

@@ -146,9 +146,20 @@ def main() -> None:
     """Entry point for the CLI application."""
     from floyd.container import create_container
 
-    container = create_container()
-    cli = CLIAdapter(
-        pr_generation_service=container.pr_generation_service,
-        git_repository=container.git_repository,
-    )
-    sys.exit(cli.run(sys.argv[1:]))
+    try:
+        container = create_container()
+
+        cli = CLIAdapter(
+            pr_generation_service=container.pr_generation_service,
+            git_repository=container.git_repository,
+        )
+
+        sys.exit(cli.run(sys.argv[1:]))
+    except DomainException as e:
+        ui.show_error(e.message)
+        
+        sys.exit(1)
+    except Exception as e:
+        ui.show_error(f"An unexpected error occurred: {str(e)}")
+
+        sys.exit(1)

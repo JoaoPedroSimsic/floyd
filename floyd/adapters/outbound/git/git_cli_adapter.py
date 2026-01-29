@@ -3,27 +3,14 @@
 import subprocess
 
 from floyd.application.ports.outbound.git_repository_port import GitRepositoryPort
+from floyd.adapters.outbound.utils.terminal import Terminal
 
 
 class GitCLIAdapter(GitRepositoryPort):
     """Git repository adapter using git CLI."""
 
-    def _run_command(self, command: list[str]) -> str | None:
-        """Execute a git command and return output.
-
-        Args:
-            command: Command and arguments to execute.
-
-        Returns:
-            Command output or None if failed.
-        """
-        try:
-            result = subprocess.run(
-                command, capture_output=True, text=True, check=True
-            )
-            return result.stdout.strip()
-        except subprocess.CalledProcessError:
-            return None
+    def __init__(self, terminal: Terminal):
+        self.terminal = terminal
 
     def is_git_repo(self) -> bool:
         """Check if current directory is a git repository."""
@@ -56,7 +43,7 @@ class GitCLIAdapter(GitRepositoryPort):
         Returns:
             Name of the current branch.
         """
-        result = self._run_command(["git", "branch", "--show-current"])
+        result = self.terminal.run(["git", "branch", "--show-current"])
         return result or ""
 
     def get_commits(self, base_branch: str) -> str:
@@ -68,7 +55,7 @@ class GitCLIAdapter(GitRepositoryPort):
         Returns:
             Formatted commit history.
         """
-        result = self._run_command(
+        result = self.terminal.run(
             ["git", "log", f"{base_branch}..HEAD", "--oneline"]
         )
         return result or ""
@@ -82,7 +69,7 @@ class GitCLIAdapter(GitRepositoryPort):
         Returns:
             Git diff output.
         """
-        result = self._run_command(
+        result = self.terminal.run(
             [
                 "git",
                 "diff",
@@ -103,7 +90,7 @@ class GitCLIAdapter(GitRepositoryPort):
         Returns:
             Diff statistics output.
         """
-        result = self._run_command(
+        result = self.terminal.run(
             [
                 "git",
                 "diff",
