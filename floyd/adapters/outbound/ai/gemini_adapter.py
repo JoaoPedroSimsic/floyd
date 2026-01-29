@@ -1,3 +1,4 @@
+from floyd.adapters.inbound.cli import ui
 from floyd.adapters.outbound.ai.ai_adapter import AIAdapter
 from floyd.application.dto.ai_config import AIConfig
 from floyd.domain.entities.git_context import GitContext
@@ -14,6 +15,7 @@ class GeminiAdapter(AIAdapter):
 
         if config.model:
             command.extend(["--model", config.model])
+            ui.show_info(f"Gemini is using the model: {config.model}")
 
         command.extend(["-p", prompt])
 
