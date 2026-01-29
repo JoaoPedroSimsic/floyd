@@ -6,7 +6,9 @@ from pathlib import Path
 
 from floyd.application.dto.ai_config import AIConfig
 from floyd.application.ports.outbound.config_port import ConfigPort
-from floyd.domain.exceptions.ai.invalid_provider_exception import InvalidProviderException
+from floyd.domain.exceptions.ai.invalid_provider_exception import (
+    InvalidProviderException,
+)
 from floyd.domain.exceptions.config.invalid_config_exception import (
     InvalidConfigException,
 )
@@ -60,6 +62,8 @@ class TomlConfigAdapter(ConfigPort):
 
             provider = AIProvider(name=raw_provider)
 
+            model = str(ai_section.get("model") or "").strip()
+
             diff_limit_raw = ai_section.get("diff_limit")
 
             diff_limit = -1
@@ -73,7 +77,10 @@ class TomlConfigAdapter(ConfigPort):
             instructions = str(ai_section.get("instructions") or "").strip()
 
             return AIConfig(
-                provider=provider.type, diff_limit=diff_limit, instructions=instructions
+                provider=provider.type,
+                model=model,
+                diff_limit=diff_limit,
+                instructions=instructions,
             )
 
         except InvalidProviderException as e:
