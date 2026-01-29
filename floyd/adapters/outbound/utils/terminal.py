@@ -2,7 +2,10 @@ import subprocess
 from rich.console import Console
 import shlex
 
-from floyd.domain.exceptions.pr.pr_generation_exception import PRGenerationException
+from floyd.domain.exceptions.terminal.missing_dependency_exception import (
+    MissingDependencyException,
+)
+from floyd.domain.exceptions.terminal.unexpected_exception import UnexpectedException
 
 
 class Terminal:
@@ -21,8 +24,6 @@ class Terminal:
         except subprocess.CalledProcessError as e:
             detail = e.stderr.strip() or str(e)
 
-            raise PRGenerationException(f"{error_msg}: {detail}") from None
+            raise UnexpectedException(f"{error_msg}: {detail}") from None
         except FileNotFoundError:
-            raise PRGenerationException(
-                f"The tool '{cmd_list[0]}' was not found. Please ensure it is installed."
-            )
+            raise MissingDependencyException(cmd_list[0])
