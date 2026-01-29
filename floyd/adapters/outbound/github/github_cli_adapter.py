@@ -1,30 +1,15 @@
 """GitHub CLI Adapter - Implements PRRepositoryPort using gh CLI."""
 
-import subprocess
-
 from floyd.application.ports.outbound.pr_repository_port import PRRepositoryPort
 from floyd.domain.entities.pull_request import PullRequest
+from floyd.adapters.outbound.utils.terminal import Terminal
 
 
 class GitHubCLIAdapter(PRRepositoryPort):
     """PR repository adapter using GitHub CLI (gh)."""
 
-    def _run_command(self, command: list[str]) -> str | None:
-        """Execute a command and return output.
-
-        Args:
-            command: Command and arguments to execute.
-
-        Returns:
-            Command output or None if failed.
-        """
-        try:
-            result = subprocess.run(
-                command, capture_output=True, text=True, check=True
-            )
-            return result.stdout.strip()
-        except subprocess.CalledProcessError:
-            return None
+    def __init__(self, terminal: Terminal):
+        self.terminal = terminal
 
     def pr_exists(self, head_branch: str, base_branch: str) -> bool:
         """Check if a PR already exists.
@@ -36,7 +21,7 @@ class GitHubCLIAdapter(PRRepositoryPort):
         Returns:
             True if PR exists, False otherwise.
         """
-        result = self._run_command(
+        result = self.terminal.run(
             [
                 "gh",
                 "pr",
@@ -65,7 +50,7 @@ class GitHubCLIAdapter(PRRepositoryPort):
         Returns:
             URL of the created PR.
         """
-        result = self._run_command(
+        result = self.terminal.run(
             [
                 "gh",
                 "pr",

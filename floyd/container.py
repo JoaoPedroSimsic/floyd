@@ -3,6 +3,7 @@
 from dataclasses import dataclass
 
 from floyd.adapters.outbound.ai.claude_adapter import ClaudeAdapter
+from floyd.adapters.outbound.ai.gemini_adapter import GeminiAdapter
 from floyd.adapters.outbound.config.toml_config_adapter import TomlConfigAdapter
 from floyd.adapters.outbound.git.git_cli_adapter import GitCLIAdapter
 from floyd.adapters.outbound.github.github_cli_adapter import GitHubCLIAdapter
@@ -11,6 +12,7 @@ from floyd.application.ports.outbound.config_port import ConfigPort
 from floyd.application.ports.outbound.git_repository_port import GitRepositoryPort
 from floyd.application.ports.outbound.pr_repository_port import PRRepositoryPort
 from floyd.application.services.pr_generation_service import PRGenerationService
+from floyd.adapters.outbound.utils.terminal import Terminal
 
 
 @dataclass
@@ -30,10 +32,18 @@ def create_container() -> Container:
     Returns:
         Container with all dependencies wired.
     """
-    ai_service = ClaudeAdapter()
-    git_repository = GitCLIAdapter()
-    pr_repository = GitHubCLIAdapter()
+    terminal = Terminal()
     config = TomlConfigAdapter()
+
+    settings = config.get_ai_config()
+
+    if settings.provider == "claude":
+        ai_service = ClaudeAdapter(terminal)
+    else:
+        ai_service = GeminiAdapter(terminal)
+
+    git_repository = GitCLIAdapter(terminal)
+    pr_repository = GitHubCLIAdapter(terminal)
 
     pr_generation_service = PRGenerationService(
         ai_service=ai_service,
