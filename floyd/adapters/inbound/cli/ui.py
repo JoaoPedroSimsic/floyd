@@ -23,6 +23,7 @@ SEC_COLOR = "#F5D500"
 
 ICON = """
 
+
  ███████████ █████          ███████    █████ █████ ██████████
 ░░███░░░░░░█░░███         ███░░░░░███ ░░███ ░░███ ░░███░░░░███
  ░███   █ ░  ░███        ███     ░░███ ░░███ ███   ░███   ░░███
@@ -31,6 +32,7 @@ ICON = """
  ░███  ░     ░███      █░░███     ███     ░███     ░███    ███
  █████       ███████████ ░░░███████░      █████    ██████████
 ░░░░░       ░░░░░░░░░░░    ░░░░░░░       ░░░░░    ░░░░░░░░░░
+
 
 
 
@@ -62,7 +64,7 @@ def show_icon() -> None:
     """Display the Floyd ASCII art logo with gradient colors."""
     stretch = 1.0
 
-    lines = ICON.strip("\n").splitlines()
+    lines = ICON.splitlines()
     if not lines:
         return
 
