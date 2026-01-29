@@ -3,6 +3,8 @@ from floyd.adapters.outbound.utils.terminal import Terminal
 from floyd.application.dto.ai_config import AIConfig
 from floyd.application.ports.outbound.ai_service_port import AIServicePort
 from floyd.domain.entities.git_context import GitContext
+from floyd.domain.entities.pull_request import PullRequest
+from floyd.domain.exceptions.pr.pr_generation_exception import PRGenerationException
 
 
 class AIAdapter(AIServicePort, ABC):
@@ -53,3 +55,27 @@ class AIAdapter(AIServicePort, ABC):
         )
 
         return prompt
+
+    def _parse_response(self, response: str) -> PullRequest:
+        """Parse Claude's response into a PullRequest.
+
+        Args:
+            response: Raw response from Claude.
+
+        Returns:
+            PullRequest entity.
+
+        Raises:
+            PRGenerationException: If parsing fails.
+        """
+        try:
+            title = response.split("TITLE:")[1].split("BODY:")[0].strip()
+            body = response.split("BODY:")[1].strip()
+
+            if not title or not body:
+                raise PRGenerationException("AI response missing title or body")
+
+            return PullRequest(title=title, body=body)
+
+        except (IndexError, AttributeError) as e:
+            raise PRGenerationException(f"Failed to parse AI response: {e}") from e
