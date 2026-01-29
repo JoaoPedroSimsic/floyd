@@ -19,4 +19,4 @@ typeCheckingMode = "strict"
 pythonVersion = "3.14"
 
 [project.scripts]
-floyd="floyd.cli:main"
+floyd="floyd.adapters.inbound.cli.cli_adapter:main"
