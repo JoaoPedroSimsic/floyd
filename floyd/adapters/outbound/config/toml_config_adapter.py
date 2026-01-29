@@ -48,17 +48,21 @@ class TomlConfigAdapter(ConfigPort):
 
             ai_section = data.get("ai", {})
 
+            provider = str(ai_section.get("provider", "claude")).lower().strip()
+
             diff_limit_raw = ai_section.get("diff_limit")
             diff_limit = -1
             if diff_limit_raw is not None:
                 try:
                     diff_limit = int(diff_limit_raw)
-                except (ValueError, TypeError):
+                except ValueError, TypeError:
                     diff_limit = -1
 
             instructions = str(ai_section.get("instructions") or "").strip()
 
-            return AIConfig(diff_limit=diff_limit, instructions=instructions)
+            return AIConfig(
+                provider=provider, diff_limit=diff_limit, instructions=instructions
+            )
 
         except Exception:
             return AIConfig()
