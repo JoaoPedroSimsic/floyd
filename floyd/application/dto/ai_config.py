@@ -12,6 +12,8 @@ class AIConfig(BaseModel):
         description="The AI provider to use (e.g., 'claude', 'gemini', 'copilot')."
     )
 
+    model: str = Field(default="", description="The specific model ID to use")
+
     diff_limit: int = Field(
         default=-1,
         description="Maximum characters for diff. -1 means no limit.",
