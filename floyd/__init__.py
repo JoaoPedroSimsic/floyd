@@ -8,4 +8,6 @@ Hexagonal Architecture Layers:
 - adapters: Infrastructure implementations (CLI, AI providers, git, etc.)
 """
 
-__version__ = "0.1.1"
+from importlib.metadata import version
+
+__version__ = version("floyd")
