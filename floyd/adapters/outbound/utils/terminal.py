@@ -1,4 +1,5 @@
 import subprocess
+import shutil
 import platform
 import shlex
 from rich.console import Console
@@ -14,6 +15,13 @@ class Terminal:
         self.console = Console()
         self._is_windows = platform.system() == "Windows"
 
+    def is_installed(self, tool: str) -> bool:
+        return shutil.which(tool) is not None
+
+    def ensure_installed(self, tool: str) -> None:
+        if not self.is_installed(tool):
+            raise MissingDependencyException(tool)
+
     def run(
         self,
         command: list[str] | str,
@@ -28,7 +36,7 @@ class Terminal:
         try:
             result = subprocess.run(
                 cmd_list,
-                input=input_data, 
+                input=input_data,
                 capture_output=True,
                 text=True,
                 check=True,
@@ -43,5 +51,7 @@ class Terminal:
             raise UnexpectedException(f"{error_msg}: {detail}") from None
 
         except FileNotFoundError:
-            cmd_name = cmd_list[0] if isinstance(cmd_list, list) else cmd_list.split()[0]
+            cmd_name = (
+                cmd_list[0] if isinstance(cmd_list, list) else cmd_list.split()[0]
+            )
             raise MissingDependencyException(cmd_name)
