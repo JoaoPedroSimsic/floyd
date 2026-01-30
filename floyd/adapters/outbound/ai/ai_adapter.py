@@ -5,6 +5,7 @@ from floyd.application.ports.outbound.ai_service_port import AIServicePort
 from floyd.domain.entities.git_context import GitContext
 from floyd.domain.entities.pull_request import PullRequest
 from floyd.domain.exceptions.pr.pr_generation_exception import PRGenerationException
+import re
 
 
 class AIAdapter(AIServicePort, ABC):
@@ -58,17 +59,15 @@ class AIAdapter(AIServicePort, ABC):
 
     def _parse_response(self, response: str) -> PullRequest:
         try:
-            print(response)
-            
-            # Using split as requested, but with careful indexing
-            title_part = response.split("TITLE:")[1]
-            title = title_part.split("BODY:")[0].strip()
-            body = response.split("BODY:")[1].strip()
+            title_match = re.search(r"TITLE:\s*(.*)", response, re.IGNORECASE)
+            body_match = re.search(r"BODY:\s*([\s\S]*)", response, re.IGNORECASE)
 
-            if not title or not body:
-                raise PRGenerationException("AI response missing title or body")
+            if not title_match or not body_match:
+                raise PRGenerationException("AI response missing title or body markers")
+
+            title = title_match.group(1).split("BODY:")[0].strip()
+            body = body_match.group(1).strip()
 
             return PullRequest(title=title, body=body)
-
-        except (IndexError, AttributeError) as e:
-            raise PRGenerationException(f"Failed to parse AI response: {e}") from e
+        except Exception as e:
+            raise PRGenerationException(f"Failed to parse AI response: {e}")
