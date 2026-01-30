@@ -17,8 +17,8 @@ class GeminiAdapter(AIAdapter):
             command.extend(["--model", config.model])
             ui.show_info(f"Gemini is using the model: {config.model}")
 
-        command.extend(["-p", prompt])
+        command.extend(["-p", "-"])
 
-        response = self.terminal.run(command, error_msg="Gemini CLI")
+        response = self.terminal.run(command, input_data=prompt, error_msg="Gemini CLI")
 
         return self._parse_response(response)
