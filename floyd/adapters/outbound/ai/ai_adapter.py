@@ -43,7 +43,7 @@ class AIAdapter(AIServicePort, ABC):
 
         return prompt
 
-    def _parse_response(self, response: str) -> PullRequest:
+    def _parse_response(self, response: str, head_branch: str) -> PullRequest:
         try:
             title_match = re.search(r"TITLE:\s*(.*)", response, re.IGNORECASE)
             body_match = re.search(r"BODY:\s*([\s\S]*)", response, re.IGNORECASE)
@@ -54,6 +54,6 @@ class AIAdapter(AIServicePort, ABC):
             title = title_match.group(1).split("BODY:")[0].strip()
             body = body_match.group(1).strip()
 
-            return PullRequest(title=title, body=body)
+            return PullRequest(title=title, body=body, head_branch=head_branch)
         except Exception as e:
             raise PRGenerationException(f"Failed to parse AI response: {e}")

@@ -21,4 +21,4 @@ class GeminiAdapter(AIAdapter):
 
         response = self.terminal.run(command, input_data=prompt, error_msg="Gemini CLI")
 
-        return self._parse_response(response)
+        return self._parse_response(response, context.current_branch.name)
