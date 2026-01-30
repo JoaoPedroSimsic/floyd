@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 
 from floyd.adapters.outbound.ai.claude_adapter import ClaudeAdapter
+from floyd.adapters.outbound.ai.copilot_adapter import CopilotAdapter
 from floyd.adapters.outbound.ai.gemini_adapter import GeminiAdapter
 from floyd.adapters.outbound.config.toml_config_adapter import TomlConfigAdapter
 from floyd.adapters.outbound.git.git_cli_adapter import GitCLIAdapter
@@ -41,6 +42,7 @@ def create_container() -> Container:
     ADAPTER_MAP = {
         ProviderType.CLAUDE: ClaudeAdapter,
         ProviderType.GEMINI: GeminiAdapter,
+        ProviderType.COPILOT: CopilotAdapter,
     }
 
     adapter_class = ADAPTER_MAP.get(settings.provider)

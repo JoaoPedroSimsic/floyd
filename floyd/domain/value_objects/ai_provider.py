@@ -10,6 +10,7 @@ from floyd.domain.exceptions.ai.invalid_provider_exception import (
 class ProviderType(str, Enum):
     CLAUDE = "claude"
     GEMINI = "gemini"
+    COPILOT = "copilot"
 
 
 class AIProvider(BaseModel):
@@ -42,6 +43,9 @@ class AIProvider(BaseModel):
 
     def is_gemini(self) -> bool:
         return self.name == ProviderType.GEMINI.value
+
+    def is_copilot(self) -> bool:
+        return self.name == ProviderType.COPILOT.value
 
     def __str__(self) -> str:
         return self.name
