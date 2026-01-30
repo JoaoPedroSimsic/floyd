@@ -1,5 +1,3 @@
-import subprocess
-
 from floyd.application.ports.outbound.git_repository_port import GitRepositoryPort
 from floyd.adapters.outbound.utils.terminal import Terminal
 
@@ -10,28 +8,28 @@ class GitCLIAdapter(GitRepositoryPort):
         self.terminal = terminal
 
     def is_git_repo(self) -> bool:
-        result = subprocess.run(
-            ["git", "rev-parse", "--is-inside-work-tree"],
-            capture_output=True,
-            text=True,
-        )
-        return result.returncode == 0
+        try:
+            self.terminal.run(["git", "rev-parse", "--is-inside-work-tree"])
+            return True
+        except Exception:
+            return False
 
     def branch_exists(self, branch_name: str) -> bool:
-        local_check = subprocess.run(
-            ["git", "show-ref", "--verify", f"refs/remotes/origin/{branch_name}"],
-            capture_output=True,
-            text=True,
-        )
-        if local_check.returncode == 0:
+        try:
+            self.terminal.run(
+                ["git", "show-ref", "--verify", f"refs/remotes/origin/{branch_name}"]
+            )
             return True
+        except Exception:
+            pass
 
-        local_only_check = subprocess.run(
-            ["git", "show-ref", "--verify", f"refs/heads/{branch_name}"],
-            capture_output=True,
-            text=True,
-        )
-        return local_only_check.returncode == 0
+        try:
+            self.terminal.run(
+                ["git", "show-ref", "--verify", f"refs/heads/{branch_name}"]
+            )
+            return True
+        except Exception:
+            return False
 
     def get_current_branch(self) -> str:
         result = self.terminal.run(["git", "branch", "--show-current"])
