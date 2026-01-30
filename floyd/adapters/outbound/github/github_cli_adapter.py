@@ -1,3 +1,6 @@
+import os
+import tempfile
+
 from floyd.application.ports.outbound.pr_repository_port import PRRepositoryPort
 from floyd.domain.entities.pull_request import PullRequest
 from floyd.adapters.outbound.utils.terminal import Terminal
@@ -29,17 +32,28 @@ class GitHubCLIAdapter(PRRepositoryPort):
         return bool(result)
 
     def create_pr(self, pr: PullRequest, base_branch: str) -> str:
-        result = self.terminal.run(
-            [
+        with tempfile.NamedTemporaryFile(
+            mode="w", delete=False, suffix=".md", encoding="utf-8"
+        ) as tf:
+            tf.write(pr.body)
+            temp_file_path = tf.name
+
+        try:
+            command = [
                 "gh",
                 "pr",
                 "create",
                 "--title",
                 pr.title,
-                "--body",
-                pr.body,
+                "--body-file",
+                temp_file_path,
                 "--base",
                 base_branch,
+                "--head",
+                pr.head_branch,
             ]
-        )
-        return result or ""
+
+            return self.terminal.run(command, error_msg="GitHub CLI")
+        finally:
+            if os.path.exists(temp_file_path):
+                os.remove(temp_file_path)
