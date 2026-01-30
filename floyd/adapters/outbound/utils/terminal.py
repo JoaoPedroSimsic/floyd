@@ -17,7 +17,7 @@ class Terminal:
 
         try:
             result = subprocess.run(
-                cmd_list, capture_output=True, text=True, check=True
+                cmd_list, capture_output=True, text=True, check=True, encoding='utf-8'
             )
 
             return result.stdout.strip()
