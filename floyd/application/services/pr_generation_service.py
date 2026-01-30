@@ -42,6 +42,8 @@ class PRGenerationService(PRGenerationPort):
             raise PRAlreadyExistsException(current_branch, target_branch)
 
     def get_git_context(self, target_branch: str) -> GitContext:
+        self._git_repository.fetch()
+
         current_branch = self._git_repository.get_current_branch()
         commits = self._git_repository.get_commits(target_branch)
         diff = self._git_repository.get_diff(target_branch)

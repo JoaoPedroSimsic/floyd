@@ -15,7 +15,7 @@ You are a text-processing utility, NOT an autonomous agent.
 {{diff_stat}}
 
 ### TASK ###
-Review the git diff and write a PR title (Conventional Commits) and description.
+Review the git diff and write a PR title (Conventional Commits) and description using markdown.
 {{instructions}}
 {{feedback}}
 

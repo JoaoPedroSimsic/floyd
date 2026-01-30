@@ -4,6 +4,10 @@ from abc import ABC, abstractmethod
 class GitRepositoryPort(ABC):
 
     @abstractmethod
+    def fetch(self) -> None:
+        ...
+
+    @abstractmethod
     def is_git_repo(self) -> bool:
         ...
 

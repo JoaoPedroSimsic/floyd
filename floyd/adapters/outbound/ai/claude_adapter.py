@@ -25,4 +25,4 @@ class ClaudeAdapter(AIAdapter):
 
         response = self.terminal.run(command,input_data=prompt, error_msg="Claude Code")
 
-        return self._parse_response(response)
+        return self._parse_response(response, context.current_branch.name)
