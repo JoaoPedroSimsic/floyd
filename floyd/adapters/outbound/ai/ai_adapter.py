@@ -2,6 +2,7 @@ from abc import ABC
 from floyd.adapters.outbound.utils.terminal import Terminal
 from floyd.application.dto.ai_config import AIConfig
 from floyd.application.ports.outbound.ai_service_port import AIServicePort
+from floyd.domain.entities.commit import Commit
 from floyd.domain.entities.git_context import GitContext
 from floyd.domain.entities.pull_request import PullRequest
 from floyd.domain.exceptions.pr.pr_generation_exception import PRGenerationException
@@ -43,7 +44,38 @@ class AIAdapter(AIServicePort, ABC):
 
         return prompt
 
+    def _build_commit_prompt(
+        self,
+        diff: str,
+        config: AIConfig,
+        feedback: str | None = None,
+    ) -> str:
+        template_path = Path(__file__).parent / "commit_prompt.txt"
+
+        with open(template_path, "r", encoding="utf-8") as f:
+            template = f.read()
+
+        if config.diff_limit > 0 and len(diff) > config.diff_limit:
+            diff = diff[:config.diff_limit] + "\n\n[... DIFF TRUNCATED ...]"
+
+        instructions = f"\nUSER-SPECIFIC INSTRUCTIONS:\n{config.instructions}" if config.instructions else ""
+        feedback_section = f"\nUSER FEEDBACK:\n{feedback}" if feedback else ""
+
+        prompt = template.replace("{{diff}}", diff)
+        prompt = prompt.replace("{{instructions}}", instructions)
+        prompt = prompt.replace("{{feedback}}", feedback_section)
+
+        return prompt
+
     def _parse_response(self, response: str, head_branch: str) -> PullRequest:
+        title, body = self._extract_title_body(response)
+        return PullRequest(title=title, body=body, head_branch=head_branch)
+
+    def _parse_commit_response(self, response: str) -> Commit:
+        title, body = self._extract_title_body(response)
+        return Commit(title=title, body=body)
+
+    def _extract_title_body(self, response: str) -> tuple[str, str]:
         try:
             title_match = re.search(r"TITLE:\s*(.*)", response, re.IGNORECASE)
             body_match = re.search(r"BODY:\s*([\s\S]*)", response, re.IGNORECASE)
@@ -54,6 +86,8 @@ class AIAdapter(AIServicePort, ABC):
             title = title_match.group(1).split("BODY:")[0].strip()
             body = body_match.group(1).strip()
 
-            return PullRequest(title=title, body=body, head_branch=head_branch)
+            return title, body
+        except PRGenerationException:
+            raise
         except Exception as e:
             raise PRGenerationException(f"Failed to parse AI response: {e}")

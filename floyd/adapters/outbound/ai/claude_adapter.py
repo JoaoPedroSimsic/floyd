@@ -1,11 +1,22 @@
 from floyd.adapters.inbound.cli import ui
 from floyd.adapters.outbound.ai.ai_adapter import AIAdapter
 from floyd.application.dto.ai_config import AIConfig
+from floyd.domain.entities.commit import Commit
 from floyd.domain.entities.git_context import GitContext
 from floyd.domain.entities.pull_request import PullRequest
 
 
 class ClaudeAdapter(AIAdapter):
+
+    def _build_command(self, config: AIConfig) -> list[str]:
+        command = ["claude"]
+
+        if config.model:
+            command.extend(["--model", config.model])
+            ui.show_info(f"Claude is using the model: {config.model}")
+
+        command.extend(["-p", "-"])
+        return command
 
     def generate_pr(
         self,
@@ -14,15 +25,17 @@ class ClaudeAdapter(AIAdapter):
         feedback: str | None = None,
     ) -> PullRequest:
         prompt = self._build_pr_prompt(context, config, feedback)
-
-        command = ["claude"]
-
-        if config.model:
-            command.extend(["--model", config.model])
-            ui.show_info(f"Claude is using the model: {config.model}")
-
-        command.extend(["-p", "-"])
-
-        response = self.terminal.run(command,input_data=prompt, error_msg="Claude Code")
-
+        command = self._build_command(config)
+        response = self.terminal.run(command, input_data=prompt, error_msg="Claude Code")
         return self._parse_response(response, context.current_branch.name)
+
+    def generate_commit(
+        self,
+        diff: str,
+        config: AIConfig,
+        feedback: str | None = None,
+    ) -> Commit:
+        prompt = self._build_commit_prompt(diff, config, feedback)
+        command = self._build_command(config)
+        response = self.terminal.run(command, input_data=prompt, error_msg="Claude Code")
+        return self._parse_commit_response(response)

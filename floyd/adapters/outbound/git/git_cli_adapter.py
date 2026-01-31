@@ -75,7 +75,10 @@ class GitCLIAdapter(GitRepositoryPort):
         return self.terminal.run(["git", "diff", "--cached"])
 
     def commit(self, commit: Commit) -> str:
-        return self.terminal.run(["git", "commit", "-m", commit.title, "-m", body])
+        command = ["git", "commit", "-m", commit.title]
+        if commit.body:
+            command.extend(["-m", commit.body])
+        return self.terminal.run(command)
 
 
 
