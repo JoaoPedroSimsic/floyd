@@ -11,7 +11,8 @@ You are a text-processing utility, NOT an autonomous agent.
 
 ### TASK ###
 Review the staged diff and write a commit message following Conventional Commits format.
-The title should be a single line summarizing the change (e.g., "feat: add user authentication").
+The title should be a single line summarizing the change.
+Use abbreviated prefixes: feat, fix, refac, doc, test, chore, style, perf, ci, build (e.g., "feat: add user authentication", "refac: extract validation logic").
 The body should provide additional context about what changed and why, if needed. Keep the body concise. If the change is trivial, the body can be empty.
 {{instructions}}
 {{feedback}}
