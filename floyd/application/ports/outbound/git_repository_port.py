@@ -33,8 +33,10 @@ class GitRepositoryPort(ABC):
     def get_diff_stat(self, base_branch: str) -> str:
         ...
 
+    @abstractmethod
     def get_staged_diff(self) -> str:
         ...
 
+    @abstractmethod
     def commit(self, commit: Commit) -> str:
         ...

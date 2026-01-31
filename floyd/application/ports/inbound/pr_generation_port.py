@@ -8,7 +8,7 @@ from floyd.domain.entities.commit import Commit
 class PRGenerationPort(ABC):
 
     @abstractmethod
-    def generate_draft(
+    def generate_pr_draft(
         self,
         context: GitContext,
         feedback: str | None = None,

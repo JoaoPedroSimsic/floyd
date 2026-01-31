@@ -16,4 +16,10 @@ class AIServicePort(ABC):
         feedback: str | None = None,
     ) -> PullRequest: ...
 
-    def generate_commit(self, diff: str, config: AIConfig) -> Commit: ...
+    @abstractmethod
+    def generate_commit(
+        self,
+        diff: str,
+        config: AIConfig,
+        feedback: str | None = None,
+    ) -> Commit: ...

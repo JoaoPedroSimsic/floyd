@@ -3,6 +3,7 @@ from floyd.application.ports.outbound.ai_service_port import AIServicePort
 from floyd.application.ports.outbound.config_port import ConfigPort
 from floyd.application.ports.outbound.git_repository_port import GitRepositoryPort
 from floyd.application.ports.outbound.pr_repository_port import PRRepositoryPort
+from floyd.domain.entities.commit import Commit
 from floyd.domain.entities.git_context import GitContext
 from floyd.domain.entities.pull_request import PullRequest
 from floyd.domain.exceptions.git.branch_not_found_exception import (
@@ -64,6 +65,14 @@ class PRGenerationService(PRGenerationPort):
     ) -> PullRequest:
         ai_config = self._config.get_ai_config()
         return self._ai_service.generate_pr(context, ai_config, feedback)
+
+    def generate_commit(
+        self,
+        diff: str,
+        feedback: str | None = None,
+    ) -> Commit:
+        ai_config = self._config.get_ai_config()
+        return self._ai_service.generate_commit(diff, ai_config, feedback)
 
     def create_pr(self, pr: PullRequest, base_branch: str) -> str:
         return self._pr_repository.create_pr(pr, base_branch)
