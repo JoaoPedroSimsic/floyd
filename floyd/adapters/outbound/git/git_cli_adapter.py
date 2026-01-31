@@ -1,5 +1,6 @@
 from floyd.application.ports.outbound.git_repository_port import GitRepositoryPort
 from floyd.adapters.outbound.utils.terminal import Terminal
+from floyd.domain.entities.commit import Commit
 
 
 class GitCLIAdapter(GitRepositoryPort):
@@ -42,7 +43,7 @@ class GitCLIAdapter(GitRepositoryPort):
         return result or ""
 
     def get_commits(self, base_branch: str) -> str:
-        result = self.terminal.run(["git", "log", f"{base_branch}..HEAD", "--oneline"])
+        result = self.terminal.run(["git", "log", f"origin/{base_branch}..HEAD", "--oneline"])
         return result or ""
 
     def get_diff(self, base_branch: str) -> str:
@@ -69,3 +70,16 @@ class GitCLIAdapter(GitRepositoryPort):
             ]
         )
         return result or ""
+
+    def get_staged_diff(self) -> str:
+        return self.terminal.run(["git", "diff", "--cached"])
+
+    def commit(self, commit: Commit) -> str:
+        command = ["git", "commit", "-m", commit.title]
+        if commit.body:
+            command.extend(["-m", commit.body])
+        return self.terminal.run(command)
+
+
+
+

@@ -56,13 +56,15 @@ class TomlConfigAdapter(ConfigPort):
                 except (ValueError, TypeError):
                     diff_limit = -1
 
-            instructions = str(ai_section.get("instructions") or "").strip()
+            pr_instructions = str(ai_section.get("pr_instructions") or "").strip()
+            commit_instructions = str(ai_section.get("commit_instructions") or "").strip()
 
             return AIConfig(
                 provider=provider.type,
                 model=model,
                 diff_limit=diff_limit,
-                instructions=instructions,
+                pr_instructions=pr_instructions,
+                commit_instructions=commit_instructions,
             )
 
         except InvalidProviderException as e:
